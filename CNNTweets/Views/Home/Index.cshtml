@@ -1,0 +1,86 @@
+﻿@model List<CNNTweets.Models.Tweet>
+
+@{
+    ViewData["Title"] = "Home Page";
+    string errorString = ViewBag.errorString;
+    bool isInBosnian = ViewBag.isInBosnian ?? false;
+}
+
+<div class="text-center">
+    <h2 id="display-name" class="display-4">Latest CNN Tweets</h2>
+</div>
+
+@if (string.IsNullOrEmpty(errorString))
+{
+    <form asp-action="SaveTweets" method="post">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tweet id</th>
+                    <th>Time</th>
+                    <th>Text</th>
+                    <th>Likes</th>
+                    <th>Link</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @for(int i=0; i< Model.Count; i++)
+                {
+                <tr class="table-row">
+                    <td class="align-middle rank">
+                        <p>@Model[i].Id</p>
+                        <input type="text" asp-for="@Model[i].Id" style="display:none" required />
+
+                    </td>
+                    <td class="align-middle rank">
+                        <p>@Model[i].Created_at</p>
+                        <input type="text" asp-for="@Model[i].Created_at" style="display:none" required />
+                    </td>
+                    <td class="align-middle rank tweet-text">
+                        <p>@Model[i].Text</p>
+                        <textarea asp-for="@Model[i].Text" style="display:none" rows="5" cols="30"></textarea>
+                    </td>
+                    <td class="align-middle rank">
+                        <p>@Model[i].Favorite_count</p>
+                        <input type="text" asp-for="@Model[i].Favorite_count" style="display:none" required />
+                    </td>
+                    <td class="align-middle rank">
+                        <a href="@Model[i].Entities.Urls[0].Url" target="_blank">See more</a>
+                        <input class="link-input" type="text" asp-for="@Model[i].Entities.Urls[0].Url" style="display:none" />
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a id="edit-btn" href="javascript:;" class="btn btn-warning">Edit</a>
+        <a id="cancel-btn" class="btn btn-warning" style="display:none">Cancel</a>
+    </form>
+
+    <div id="transle-div" class="mt-2">
+        @if (!isInBosnian)
+        {
+            <form asp-action="GetTweetsInBosnian">
+                <p>Get tweets in Bosnian language</p>
+                <button class="btn btn-info" type="submit">Get</button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="Index">
+                <p>Get tweets in English language</p>
+
+                <button class="btn btn-info" type="submit">Get</button>
+            </form>
+        }
+    </div>
+}
+else
+{
+    <text>
+        <h1>Oops, an error occurred.. :(</h1>
+        <h2>@ViewBag.errorString</h2>
+    </text>
+}
